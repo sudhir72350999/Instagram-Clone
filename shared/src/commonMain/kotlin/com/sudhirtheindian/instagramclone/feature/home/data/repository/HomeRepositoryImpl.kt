@@ -18,14 +18,67 @@ class HomeRepositoryImpl(
 ) : HomeRepository {
 
     override fun getFeedPosts(): Flow<List<Post>> {
-        return database.instagramDatabaseQueries.getAllPosts().asFlow().mapToList(Dispatchers.Main).map { entities ->
-            entities.map { it.toDomain() }
-        }
+        return database.instagramDatabaseQueries.getAllPosts()
+            .asFlow()
+            .mapToList(Dispatchers.Main)
+            .map { entities ->
+                if (entities.isEmpty()) {
+                    generateRandomPosts()
+                } else {
+                    entities.map { it.toDomain() }
+                }
+            }
     }
 
     override fun getStories(): Flow<List<Story>> {
-        return database.instagramDatabaseQueries.getAllStories().asFlow().mapToList(Dispatchers.Main).map { entities ->
-            entities.map { it.toDomain() }
+        return database.instagramDatabaseQueries.getAllStories()
+            .asFlow()
+            .mapToList(Dispatchers.Main)
+            .map { entities ->
+                if (entities.isEmpty()) {
+                    generateRandomStories()
+                } else {
+                    entities.map { it.toDomain() }
+                }
+            }
+    }
+
+    private fun generateRandomPosts(): List<Post> {
+        val usernames = listOf("arvind_mera_sathi", "start_withashutosh", "techcham...", "hiteshcho...", "shradhak...")
+        return List(10) { index ->
+            val username = usernames.getOrElse(index % usernames.size) { "user_$index" }
+            Post(
+                id = "post_$index",
+                userId = "user_$index",
+                username = username,
+                userProfileImageUrl = "https://picsum.photos/200/200?random=$index",
+                imageUrl = "https://picsum.photos/600/600?random=${index + 100}",
+                caption = if (index % 2 == 0) "अंकित की बजाए अगर अरविंद मेरा साथी होता तो अरमान का क्या हाल होता ?" else "Random post caption for post $index #instagram #clone",
+                likeCount = (10..1000).random(),
+                commentCount = (5..100).random(),
+                isLiked = index % 3 == 0,
+                isSaved = index % 4 == 0,
+                isVerified = index % 2 == 0,
+                lastLikedBy = "sairakshith28",
+                createdAt = 1722612066000 + (index * 100000)
+            )
+        }
+    }
+
+    private fun generateRandomStories(): List<Story> {
+        val usernames = listOf("shradhak...", "hiteshcho...", "techcham...", "manish_tr...", "okate.k", "akash_pr...")
+        return List(8) { index ->
+            val username = usernames.getOrElse(index % usernames.size) { "user_$index" }
+            Story(
+                id = "story_$index",
+                userId = "user_$index",
+                username = username,
+                userProfileImageUrl = "https://picsum.photos/200/200?random=${index + 200}",
+                imageUrl = "https://picsum.photos/600/1000?random=${index + 300}",
+                isSeen = false,
+                isVerified = index % 3 == 0,
+                createdAt = 1722612066000 + (index * 50000)
+            )
         }
     }
 

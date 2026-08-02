@@ -21,6 +21,10 @@ import com.sudhirtheindian.instagramclone.feature.home.domain.model.Story
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+
 @Composable
 fun StoryItem(
     story: Story,
@@ -29,37 +33,44 @@ fun StoryItem(
 ) {
     Column(
         modifier = modifier
-            .width(80.dp)
+            .width(85.dp)
             .padding(4.dp)
             .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(70.dp)
-                .border(
-                    width = 2.dp,
+                .size(72.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Instagram Gradient Ring
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val strokeWidth = 2.5.dp.toPx()
+                drawCircle(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.tertiary
+                            Color(0xFFF9CE34), // Yellow
+                            Color(0xFFEE2A7B), // Pink
+                            Color(0xFF6228D7)  // Purple
                         )
                     ),
-                    shape = RoundedCornerShape(35.dp)
+                    radius = size.minDimension / 2 - strokeWidth / 2,
+                    style = Stroke(width = strokeWidth)
                 )
-                .padding(4.dp)
-        ) {
+            }
+            
             KamelImage(
                 resource = asyncPainterResource(story.userProfileImageUrl ?: ""),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(30.dp)),
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, Color.White, CircleShape), // White gap
                 contentScale = ContentScale.Crop
             )
         }
         
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         
         Text(
             text = story.username,
@@ -67,7 +78,7 @@ fun StoryItem(
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
         )
     }
 }

@@ -7,19 +7,35 @@ import com.sudhirtheindian.instagramclone.feature.auth.domain.usecase.LoginUseCa
 import com.sudhirtheindian.instagramclone.feature.auth.domain.usecase.RegisterUseCase
 import com.sudhirtheindian.instagramclone.feature.auth.presentation.login.LoginViewModel
 import com.sudhirtheindian.instagramclone.feature.auth.presentation.register.RegisterViewModel
+import com.sudhirtheindian.instagramclone.feature.camera.presentation.CameraViewModel
 import com.sudhirtheindian.instagramclone.feature.home.data.repository.HomeRepositoryImpl
 import com.sudhirtheindian.instagramclone.feature.home.domain.repository.HomeRepository
 import com.sudhirtheindian.instagramclone.feature.home.domain.usecase.GetFeedUseCase
 import com.sudhirtheindian.instagramclone.feature.home.presentation.home.HomeViewModel
+import com.sudhirtheindian.instagramclone.feature.chat.presentation.ChatListViewModel
+import com.sudhirtheindian.instagramclone.feature.chat.presentation.ChatViewModel
+import com.sudhirtheindian.instagramclone.feature.reels.presentation.ReelsViewModel
+import com.sudhirtheindian.instagramclone.feature.search.presentation.SearchViewModel
+import com.sudhirtheindian.instagramclone.feature.notification.presentation.NotificationViewModel
+import com.sudhirtheindian.instagramclone.feature.profile.presentation.ProfileViewModel
+import com.sudhirtheindian.instagramclone.feature.profile.followers.presentation.FollowersViewModel
+import com.sudhirtheindian.instagramclone.feature.profile.editprofile.presentation.EditProfileViewModel
+import com.sudhirtheindian.instagramclone.feature.publicprofile.presentation.PublicProfileViewModel
+import com.sudhirtheindian.instagramclone.feature.settings.presentation.SettingsViewModel
 import com.sudhirtheindian.instagramclone.feature.splash.presentation.SplashViewModel
+import com.sudhirtheindian.instagramclone.feature.upload.presentation.CreatePostViewModel
+import com.sudhirtheindian.instagramclone.db.InstagramDatabase
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
+
+expect val platformModule: Module
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
@@ -30,7 +46,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             databaseModule,
             repositoryModule,
             useCaseModule,
-            viewModelModule
+            viewModelModule,
+            platformModule,
         )
     }
 
@@ -47,7 +64,7 @@ val networkModule = module {
 }
 
 val databaseModule = module {
-    // SQLDelight database (Need driver)
+    single { InstagramDatabase(get()) }
 }
 
 val repositoryModule = module {
@@ -67,4 +84,16 @@ val viewModelModule = module {
     factoryOf(::LoginViewModel)
     factoryOf(::RegisterViewModel)
     factoryOf(::HomeViewModel)
+    factoryOf(::CameraViewModel)
+    factoryOf(::ChatListViewModel)
+    factoryOf(::ChatViewModel)
+    factoryOf(::CreatePostViewModel)
+    factoryOf(::ReelsViewModel)
+    factoryOf(::SearchViewModel)
+    factoryOf(::NotificationViewModel)
+    factoryOf(::ProfileViewModel)
+    factoryOf(::FollowersViewModel)
+    factoryOf(::EditProfileViewModel)
+    factoryOf(::PublicProfileViewModel)
+    factoryOf(::SettingsViewModel)
 }

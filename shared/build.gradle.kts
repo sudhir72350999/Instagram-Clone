@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -146,7 +145,7 @@ kotlin {
 
 sqldelight {
     databases {
-        create("InstagramDatabase") {
+        register("InstagramDatabase") {
             packageName.set("com.sudhirtheindian.instagramclone.db")
         }
     }

@@ -9,7 +9,10 @@ data class Post(
     val caption: String?,
     val likeCount: Int,
     val commentCount: Int,
+    val repostCount: Int = 0,
     val isLiked: Boolean,
     val isSaved: Boolean,
+    val isVerified: Boolean = false,
+    val lastLikedBy: String? = null,
     val createdAt: Long
 )

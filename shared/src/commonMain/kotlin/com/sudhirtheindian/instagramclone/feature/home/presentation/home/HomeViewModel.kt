@@ -21,6 +21,8 @@ data class HomeUiState(
 sealed class HomeUiEvent {
     object Refresh : HomeUiEvent()
     data class LikePost(val postId: String) : HomeUiEvent()
+    data class SavePost(val postId: String) : HomeUiEvent()
+    object LoadMore : HomeUiEvent()
 }
 
 class HomeViewModel(
@@ -50,8 +52,44 @@ class HomeViewModel(
     fun onEvent(event: HomeUiEvent) {
         when (event) {
             HomeUiEvent.Refresh -> refresh()
-            is HomeUiEvent.LikePost -> {} // Implement like
+            is HomeUiEvent.LikePost -> likePost(event.postId)
+            is HomeUiEvent.SavePost -> savePost(event.postId)
+            HomeUiEvent.LoadMore -> loadMore()
         }
+    }
+
+    private fun likePost(postId: String) {
+        screenModelScope.launch {
+            // Optimistic UI update
+            _uiState.value = _uiState.value.copy(
+                posts = _uiState.value.posts.map {
+                    if (it.id == postId) {
+                        val isLiked = !it.isLiked
+                        it.copy(
+                            isLiked = isLiked,
+                            likeCount = if (isLiked) it.likeCount + 1 else it.likeCount - 1
+                        )
+                    } else it
+                }
+            )
+            // Real update (mocked for now, normally would call usecase)
+            // getFeedUseCase.likePost(postId, isLiked)
+        }
+    }
+
+    private fun savePost(postId: String) {
+        screenModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                posts = _uiState.value.posts.map {
+                    if (it.id == postId) it.copy(isSaved = !it.isSaved) else it
+                }
+            )
+        }
+    }
+
+    private fun loadMore() {
+        if (_uiState.value.isLoading) return
+        // Implement pagination logic here
     }
 
     private fun refresh() {

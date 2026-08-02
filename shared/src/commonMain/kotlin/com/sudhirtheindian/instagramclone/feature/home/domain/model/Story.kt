@@ -7,5 +7,6 @@ data class Story(
     val userProfileImageUrl: String?,
     val imageUrl: String,
     val isSeen: Boolean,
+    val isVerified: Boolean = false,
     val createdAt: Long
 )

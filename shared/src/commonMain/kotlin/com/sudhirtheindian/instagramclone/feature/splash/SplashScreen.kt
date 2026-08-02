@@ -13,7 +13,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.sudhirtheindian.instagramclone.core.ui.navigation.InstagramScreen
 import com.sudhirtheindian.instagramclone.feature.auth.presentation.login.LoginScreen
-import com.sudhirtheindian.instagramclone.feature.home.presentation.home.HomeScreen
+import com.sudhirtheindian.instagramclone.feature.upload.presentation.MainScreen
 import com.sudhirtheindian.instagramclone.feature.splash.components.SplashLogo
 import com.sudhirtheindian.instagramclone.feature.splash.presentation.SplashUiState
 import com.sudhirtheindian.instagramclone.feature.splash.presentation.SplashViewModel
@@ -28,7 +28,7 @@ class SplashScreen : InstagramScreen {
         LaunchedEffect(uiState) {
             when (uiState) {
                 is SplashUiState.Authenticated -> {
-                    navigator.replaceAll(HomeScreen())
+                    navigator.replaceAll(MainScreen())
                 }
                 is SplashUiState.Unauthenticated -> {
                     navigator.replaceAll(LoginScreen())

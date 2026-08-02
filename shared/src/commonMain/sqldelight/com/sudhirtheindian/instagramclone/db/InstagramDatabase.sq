@@ -1,0 +1,64 @@
+CREATE TABLE UserEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    username TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    profileImageUrl TEXT,
+    bio TEXT,
+    website TEXT,
+    isFollowing INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0
+);
+
+CREATE TABLE PostEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    userId TEXT NOT NULL,
+    imageUrl TEXT NOT NULL,
+    caption TEXT,
+    likeCount INTEGER NOT NULL DEFAULT 0,
+    commentCount INTEGER NOT NULL DEFAULT 0,
+    isLiked INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+    createdAt INTEGER NOT NULL,
+    FOREIGN KEY (userId) REFERENCES UserEntity(id)
+);
+
+CREATE TABLE StoryEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    userId TEXT NOT NULL,
+    imageUrl TEXT NOT NULL,
+    isSeen INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0,
+    createdAt INTEGER NOT NULL,
+    FOREIGN KEY (userId) REFERENCES UserEntity(id)
+);
+
+-- Queries
+insertUser:
+INSERT OR REPLACE INTO UserEntity(id, username, fullName, profileImageUrl, bio, website, isFollowing)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+getUserById:
+SELECT * FROM UserEntity WHERE id = ?;
+
+insertPost:
+INSERT OR REPLACE INTO PostEntity(id, userId, imageUrl, caption, likeCount, commentCount, isLiked, createdAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllPosts:
+SELECT PostEntity.*, UserEntity.username, UserEntity.profileImageUrl
+FROM PostEntity
+JOIN UserEntity ON PostEntity.userId = UserEntity.id
+ORDER BY createdAt DESC;
+
+insertStory:
+INSERT OR REPLACE INTO StoryEntity(id, userId, imageUrl, isSeen, createdAt)
+VALUES (?, ?, ?, ?, ?);
+
+getAllStories:
+SELECT StoryEntity.*, UserEntity.username, UserEntity.profileImageUrl
+FROM StoryEntity
+JOIN UserEntity ON StoryEntity.userId = UserEntity.id
+ORDER BY createdAt DESC;
+
+deleteAllPosts:
+DELETE FROM PostEntity;
+
+deleteAllStories:
+DELETE FROM StoryEntity;
